@@ -1,0 +1,18 @@
+---
+Resources:
+  ConsulAgentTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        Fn::Splice:
+          - 0
+          - 2
+          - - Image: 'consul:1.0.7'
+              Command:
+                Fn::Replace:
+                  - 'agent'
+                  - '-datacenter'
+                  - Ref: AWS::Region
+                  - '-retry-join'
+                  - Fn::Sub: 'provider=aws tag_key=aws:autoscaling:groupName tag_value=${ConsulServerAutoScalingGroup}'
+            - Image: 'gliderlabs/registrator:master'
+
